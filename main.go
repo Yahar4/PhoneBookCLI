@@ -36,20 +36,27 @@ func showPeople() {
 }
 
 func addContact() {
-	form := tview.NewForm().
-		AddDropDown("Gender", []string{"Male", "Female"}, 0, nil).
-		AddInputField("Name", "", 20, nil, nil).
-		AddCheckbox("Age 18+", false, nil).
-		AddButton("Save", nil).
-		AddButton("Back", main)
+	form := tview.NewForm()
+
+	form.AddDropDown("Gender", []string{"Male", "Female"}, 0, nil)
+	form.AddInputField("Name", "", 20, nil, nil)
+	form.AddInputField("Number", "", 14, nil, nil)
+	form.AddCheckbox("Age 18+", false, nil)
+	form.AddButton("Save", func() {
+		name := form.GetFormItemByLabel("Name").(*tview.InputField).GetText()
+
+		phoneNumber := form.GetFormItemByLabel("Number").(*tview.InputField).GetText()
+
+		contact := Contact{
+			Name:  name,
+			Phone: phoneNumber,
+		}
+
+		contactList = append(contactList, &contact)
+	})
+	form.AddButton("Back", main)
 
 	form.SetBorder(true).SetTitle("Enter Person's Info").SetTitleAlign(tview.AlignCenter)
-
-	name := form.GetFormItem(2).(*tview.InputField).GetText()
-
-	contact := Contact{Name: name}
-
-	contactList = append(contactList, &contact)
 
 	if err := app.SetRoot(form, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
